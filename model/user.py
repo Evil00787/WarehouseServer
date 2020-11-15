@@ -30,17 +30,22 @@ def to_dict(user):
 	if hasattr(user, 'login'):
 		dict[db_login] = str(user.login)
 	if hasattr(user, 'password'):
-		dict[db_password] = str(user.password)
+		if user.password is not None:
+			dict[db_password] = str(user.password)
 	if hasattr(user, 'role'):
 		dict[db_role] = str(user.role)
 	if hasattr(user, 'auth'):
-		dict[db_auth] = str(user.auth)
+		if user.auth is not None:
+			dict[db_auth] = str(user.auth)
 	if hasattr(user, active):
-		dict[active] = str(user.is_active)
+		if user.is_active is not None:
+			dict[active] = str(user.is_active)
 	if hasattr(user, authenticated):
-		dict[authenticated] = str(user.is_authenticated)
+		if user.is_authenticated is not None:
+			dict[authenticated] = str(user.is_authenticated)
 	if hasattr(user, anonymous):
-		dict[anonymous] = str(user.is_anonymous)
+		if user.is_anonymous is not None:
+			dict[anonymous] = str(user.is_anonymous)
 	return dict
 
 

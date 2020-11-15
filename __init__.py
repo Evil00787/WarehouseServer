@@ -1,18 +1,13 @@
 import os
-from flask import Flask, jsonify
+from flask import Flask
 from .db import products_db_req, auth_db_req
 from flask_login import (
     LoginManager,
-    current_user,
-    login_required,
-    login_user,
-	logout_user,
 )
 from pymongo import MongoClient
 from .routes import auth as auth_blueprint
 from .routes import main as main_blueprint
 
-# GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 SECRET = os.environ.get("SECRET", None)
 
 app = Flask(__name__)

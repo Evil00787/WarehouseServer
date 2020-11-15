@@ -30,7 +30,13 @@ def login():
 	if user is None or not check_password_hash(user.password, request.json[u.db_password]):
 		return jsonify({"success": False}), 201
 	login_user(user)
-	return jsonify({"success": True}), 201
+	send_user = user
+	send_user.auth = None
+	send_user.password = None
+	send_user.is_active = None
+	send_user.is_anonymous = None
+	send_user.is_authenticated = None
+	return jsonify(send_user.to_json()), 201
 
 
 @authb.route("/register", methods=['POST'])
@@ -48,7 +54,7 @@ def register():
 	return jsonify({"success": True}), 201
 
 
-@authb.route("/logout", methods=['POST'])
+@authb.route("/logout", methods=['GET'])
 @login_required(role="ANY")
 def logout():
 	logout_user()
