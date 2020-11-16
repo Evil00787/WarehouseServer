@@ -3,6 +3,7 @@ from flask import render_template, jsonify, request, abort, Blueprint
 from scripts.model.product import Product
 from scripts.model import product as pr
 from scripts.db import products_db_req as pdb
+from scripts.model.user import ADMIN, Roles, MANAGER
 from scripts.routes.auth import login_required
 
 mainb = Blueprint('main', __name__)
@@ -38,6 +39,28 @@ def update_product():
 		abort(400)
 	product = Product(request.json)
 	pdb.update_product(product)
+	return jsonify(pr.to_dict(product)), 201
+
+
+@mainb.route('/product/quantity', methods=['POST'])
+@login_required(role="ANY")
+def update_quantity():
+	if not request.json or pr.db_product_id not in request.json or pr.db_quantity not in request.json:
+		abort(400)
+	product = Product(request.json)
+	output = pdb.change_quantity(product)
+	if isinstance(output, bool):
+		return jsonify({"error": "Quantity can't be negative"}), 406
+	return jsonify(pr.to_dict(product)), 201
+
+
+@mainb.route('/product/delete', methods=['POST'])
+@login_required(role=[str(Roles[ADMIN]), str(Roles[MANAGER])])
+def delete_product():
+	if not request.json or pr.db_product_id not in request.json:
+		abort(400)
+	product = Product(request.json)
+	pdb.remove_product(product.pid)
 	return jsonify(pr.to_dict(product)), 201
 
 

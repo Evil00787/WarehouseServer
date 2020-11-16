@@ -1,7 +1,7 @@
 from bson import ObjectId
 
 from scripts.db.mongo_req import insert, select, update, delete, select_one
-from scripts.model.product import db_product_id, to_dict, Product
+from scripts.model.product import db_product_id, to_dict, Product, db_quantity
 
 global products
 
@@ -19,7 +19,20 @@ def remove_product(pid):
 def update_product(product):
 	data = to_dict(product)
 	del data[db_product_id]
+	data = {'$set': data}
 	return update(products, {db_product_id: product.pid}, data)
+
+
+def change_quantity(product):
+	actual_product = get_product(product.pid)
+	if actual_product[db_quantity] + product.quantity < 0:
+		return False
+	data = to_dict(product)
+	del data[db_product_id]
+	data = {'$inc': data}
+	update(products, {db_product_id: product.pid}, data)
+	actual_product[db_quantity] = actual_product[db_quantity] - product.quantity
+	return actual_product
 
 
 def get_product(pid):

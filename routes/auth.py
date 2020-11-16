@@ -15,7 +15,7 @@ def login_required(role="ANY"):
 	def wrapper(fn):
 		@wraps(fn)
 		def decorated_view(*args, **kwargs):
-			if not current_user.is_authenticated or (current_user.role != role and role != "ANY"):
+			if not current_user.is_authenticated or (role != "ANY" and current_user.role not in role):
 				return current_app.login_manager.unauthorized()
 			return fn(*args, **kwargs)
 		return decorated_view
@@ -40,7 +40,7 @@ def login():
 
 
 @authb.route("/register", methods=['POST'])
-@login_required(role=str(Roles[ADMIN]))
+@login_required(role=[str(Roles[ADMIN])])
 def register():
 	if not request.json or u.db_login not in request.json or u.db_password not in request.json:
 		abort(400)

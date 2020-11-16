@@ -14,7 +14,7 @@ def insert(collection, data):
 
 
 def update(collection, id_filter, data):
-	return collection.replace_one(id_filter, data)
+	return collection.update_one(id_filter, data)
 
 
 def delete(collection, constraints):

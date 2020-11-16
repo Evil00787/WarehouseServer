@@ -20,7 +20,7 @@ MANAGER = 'MANAGER'
 EMPLOYEE = 'EMPLOYEE'
 ADMIN = 'ADMIN'
 
-Roles = {MANAGER: 0, EMPLOYEE: 1, ADMIN: 2}
+Roles = {EMPLOYEE: 0, MANAGER: 1, ADMIN: 2}
 
 
 def to_dict(user):
