@@ -13,6 +13,7 @@ db_login = "login"
 db_password = "password"
 db_role = "role"
 db_auth = "authenticationID"
+db_token = "idToken"
 active = 'is_active'
 authenticated = 'is_authenticated'
 anonymous = 'is_anonymous'

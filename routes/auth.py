@@ -1,15 +1,20 @@
 from functools import wraps
 
+import os
+
+from firebase_admin import auth
 from flask import jsonify, request, abort, Blueprint, current_app
 from flask_login import login_required, logout_user, login_user, current_user
+from google.auth.transport import requests
+from google.oauth2 import id_token
 from werkzeug.security import check_password_hash
+
 
 from scripts.db import auth_db_req as adr
 from scripts.model import user as u
 from scripts.model.user import User, Roles, EMPLOYEE, ADMIN
 
 authb = Blueprint('auth', __name__)
-
 
 def login_required(role="ANY"):
 	def wrapper(fn):
@@ -24,11 +29,19 @@ def login_required(role="ANY"):
 
 @authb.route('/login', methods=['POST'])
 def login():
-	if not request.json or u.db_login not in request.json or u.db_password not in request.json:
+	if not request.json or u.db_login not in request.json and (u.db_password not in request.json or u.db_token not in request.json):
 		abort(400)
 	user = adr.get_user_by_login(request.json[u.db_login])
-	if user is None or not check_password_hash(user.password, request.json[u.db_password]):
-		return jsonify({"success": False}), 201
+	if u.db_password not in request.json:
+		try:
+			decoded_token = auth.verify_id_token(request.json[u.db_token])
+			uid = decoded_token['uid']
+		except ValueError as e:
+			print(e)
+			return jsonify({"success": False}), 201
+	else:
+		if user is None or not check_password_hash(user.password, request.json[u.db_password]):
+			return jsonify({"success": False}), 201
 	login_user(user)
 	send_user = user
 	send_user.auth = None
