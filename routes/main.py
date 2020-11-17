@@ -50,7 +50,7 @@ def update_quantity():
 	product = Product(request.json)
 	output = pdb.change_quantity(product)
 	if isinstance(output, bool):
-		return jsonify({"error": "Quantity can't be negative"}), 406
+		return jsonify({"exception": "Quantity can't be negative"}), 406
 	return jsonify(pr.to_dict(product)), 201
 
 
@@ -64,10 +64,12 @@ def delete_product():
 	return jsonify(pr.to_dict(product)), 201
 
 
-@mainb.route('/product', methods=['GET'])
+@mainb.route('/product', methods=['POST'])
 @login_required(role="ANY")
 def get_product():
 	if not request.json or pr.db_product_id not in request.json:
 		abort(400)
 	doc = pdb.get_product(request.json[pr.db_product_id])
+	if doc is None:
+		abort(400)
 	return jsonify(doc), 200

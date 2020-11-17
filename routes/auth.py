@@ -32,6 +32,8 @@ def login():
 	if not request.json or u.db_login not in request.json and (u.db_password not in request.json or u.db_token not in request.json):
 		abort(400)
 	user = adr.get_user_by_login(request.json[u.db_login])
+	if user is None:
+		return jsonify({"success": False}), 201
 	if u.db_password not in request.json:
 		try:
 			decoded_token = auth.verify_id_token(request.json[u.db_token])
@@ -40,7 +42,7 @@ def login():
 			print(e)
 			return jsonify({"success": False}), 201
 	else:
-		if user is None or not check_password_hash(user.password, request.json[u.db_password]):
+		if not check_password_hash(user.password, request.json[u.db_password]):
 			return jsonify({"success": False}), 201
 	login_user(user)
 	send_user = user

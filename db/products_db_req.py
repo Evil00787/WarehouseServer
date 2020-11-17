@@ -7,6 +7,8 @@ global products
 
 
 def add_product(item):
+	if hasattr(item, 'price'):
+		item.price = round(item.price, 2)
 	response = insert(products, to_dict(item))
 	item.pid = response.inserted_id
 	return item
@@ -17,6 +19,8 @@ def remove_product(pid):
 
 
 def update_product(product):
+	if hasattr(product, 'price'):
+		product.price = round(product.price, 2)
 	data = to_dict(product)
 	del data[db_product_id]
 	data = {'$set': data}
