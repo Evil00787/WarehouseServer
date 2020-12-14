@@ -15,7 +15,7 @@ def add_product(item):
 
 
 def remove_product(pid):
-	return delete(products, {db_product_id: pid})
+	return delete(products, {db_product_id: ObjectId(pid)})
 
 
 def update_product(product):

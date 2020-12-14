@@ -5,7 +5,7 @@ def select(collection, constraints=None):
 
 
 def select_one(collection, constraints=None):
-	val =  collection.find_one(constraints)
+	val = collection.find_one(constraints)
 	return val
 
 
